@@ -20,13 +20,16 @@
   .layout{display:flex;min-height:100vh}
   aside{width:290px;flex-shrink:0;background:var(--panel);border-right:1px solid var(--line);height:100vh;position:sticky;top:0;display:flex;flex-direction:column}
   main{flex:1;min-width:0;padding:28px 40px 80px}
+  #menuBtn{display:none;align-items:center;gap:6px;border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:14px}
+  #backdrop{position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:45;display:none}
+  #backdrop.show{display:block}
   @media (max-width:900px){
     aside{position:fixed;left:0;top:0;z-index:50;transform:translateX(-100%);transition:transform .25s}
     aside.open{transform:none;box-shadow:0 0 40px rgba(0,0,0,.2)}
     main{padding:20px 18px 60px}
-    #menuBtn{display:inline-flex}
+    /* 悬浮目录按钮：滚动到任何位置都能打开侧边栏 */
+    #menuBtn{display:inline-flex;position:fixed;top:12px;left:12px;z-index:60;box-shadow:0 2px 10px rgba(15,23,42,.18);font-weight:600}
   }
-  #menuBtn{display:none;align-items:center;gap:6px;border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:14px}
 
   /* ---------- 侧边栏 ---------- */
   .side-head{padding:18px 18px 10px;border-bottom:1px solid var(--line)}
@@ -186,6 +189,7 @@
 </style>
 </head>
 <body>
+<div id="backdrop" onclick="toggleSide()"></div>
 <div class="layout">
   <aside id="sidebar">
     <div class="side-head">
@@ -204,7 +208,7 @@
     <nav id="nav"></nav>
   </aside>
   <main>
-    <button id="menuBtn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰ 目录</button>
+    <button id="menuBtn" onclick="toggleSide()">☰ 目录</button>
     <div id="homeView"></div>
     <div id="unitView" style="display:none"></div>
     <div id="searchView"></div>
@@ -433,6 +437,11 @@
     return {view:'',ch:seg[0]||'',uId:seg[1]||'',qi:qi?parseInt(qi,10):-1};
   }
   function go(hash){location.hash=hash;}
+  window.toggleSide=function(){
+    var sb=document.getElementById('sidebar');
+    var open=sb.classList.toggle('open');
+    document.getElementById('backdrop').classList.toggle('show',open);
+  };
   function show(view){
     homeView.style.display=view==='home'?'block':'none';
     unitView.style.display=view==='unit'?'block':'none';
@@ -440,6 +449,7 @@
     reviewView.style.display=view==='review'?'block':'none';
     mindmapView.style.display=view==='mindmap'?'block':'none';
     document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('backdrop').classList.remove('show');
   }
   function render(){
     var r=route();
