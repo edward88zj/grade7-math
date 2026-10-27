@@ -127,6 +127,62 @@
   .no-result{color:var(--muted);padding:30px 0;text-align:center}
 
   footer{margin-top:40px;text-align:center;font-size:12px;color:var(--muted)}
+
+  /* ---------- 考点梳理视图 ---------- */
+  #reviewView .r-head{display:flex;align-items:center;gap:12px;margin-bottom:6px;flex-wrap:wrap}
+  #reviewView h2.r-title{font-size:24px;margin-bottom:4px}
+  #reviewView .r-sub{color:var(--muted);font-size:14px;margin-bottom:16px}
+  #reviewView .legend{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+  #reviewView .legend span{font-size:13px;border-radius:999px;padding:4px 14px;font-weight:600}
+  #reviewView .legend .k{background:var(--brand-soft);color:var(--brand)}
+  #reviewView .legend .d{background:var(--purple-soft);color:var(--purple)}
+  #reviewView .legend .p{background:var(--amber-soft);color:var(--amber)}
+  #reviewView .r-ch{background:var(--panel);border:1px solid var(--line);border-radius:14px;margin-bottom:18px;overflow:hidden;box-shadow:var(--shadow)}
+  #reviewView .r-ch-head{display:flex;align-items:center;gap:12px;padding:13px 20px;background:linear-gradient(90deg,var(--brand-soft),transparent);cursor:pointer;user-select:none}
+  #reviewView .r-ch-head .no{background:var(--brand);color:#fff;border-radius:8px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
+  #reviewView .r-ch-head h3{font-size:17px;flex:1}
+  #reviewView .r-ch-head .arr{color:var(--muted);font-size:13px}
+  #reviewView .r-ch.closed .r-ch-head .arr::after{content:"▸"}
+  #reviewView .r-ch:not(.closed) .r-ch-head .arr::after{content:"▾"}
+  #reviewView .r-ch-body{padding:2px 20px 16px}
+  #reviewView .r-ch.closed .r-ch-body{display:none}
+  #reviewView .sec{margin-top:12px}
+  #reviewView .sec h4{font-size:14px;margin-bottom:7px}
+  #reviewView .sec.key{background:var(--brand-soft);border-radius:10px;padding:11px 15px}
+  #reviewView .sec.key h4{color:var(--brand)}
+  #reviewView .sec.diff{background:var(--purple-soft);border-radius:10px;padding:11px 15px}
+  #reviewView .sec.diff h4{color:var(--purple)}
+  #reviewView .sec.pit{background:var(--amber-soft);border-left:3px solid var(--amber);border-radius:0 10px 10px 0;padding:11px 15px}
+  #reviewView .sec.pit h4{color:var(--amber)}
+  #reviewView .sec ul{list-style:none}
+  #reviewView .sec li{padding:3px 0 3px 20px;position:relative}
+  #reviewView .sec.key li::before{content:"";position:absolute;left:4px;top:12px;width:7px;height:7px;border-radius:50%;background:var(--brand)}
+  #reviewView .sec.diff li::before{content:"";position:absolute;left:4px;top:12px;width:7px;height:7px;border-radius:50%;background:var(--purple)}
+  #reviewView .sec.pit li::before{content:"✗";position:absolute;left:0;top:3px;font-size:12px;color:var(--amber);font-weight:700}
+  #reviewView .sec b{color:var(--brand)}
+  #reviewView .sec.diff b{color:var(--purple)}
+  #reviewView .sec.pit b{color:var(--amber)}
+
+  /* ---------- 思维导图视图 ---------- */
+  #mindmapView{position:relative}
+  #mmBar{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:6px 10px;box-shadow:var(--shadow);margin-bottom:10px;position:sticky;top:0;z-index:5}
+  #mmBar button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 14px;font-size:13px;cursor:pointer;color:var(--ink)}
+  #mmBar button:hover{border-color:var(--brand);color:var(--brand)}
+  #mmStage{position:relative;height:calc(100vh - 210px);min-height:480px;background:#f0f4fa;border:1px solid var(--line);border-radius:14px;overflow:hidden;cursor:grab;touch-action:none}
+  #mmStage.dragging{cursor:grabbing}
+  #mmStage svg{display:block}
+  .mm-node rect{fill:#fff;stroke:var(--line);stroke-width:1;transition:filter .15s}
+  .mm-node:hover rect{filter:drop-shadow(0 3px 6px rgba(15,23,42,.25))}
+  .mm-node text{fill:var(--ink);font-size:13px;user-select:none;pointer-events:none}
+  .mm-node.mm-root rect{fill:#1e3a8a;stroke:#1e3a8a}
+  .mm-node.mm-root text{fill:#fff;font-size:17px;font-weight:700}
+  .mm-node.mm-ch rect{stroke-width:1.5}
+  .mm-node.mm-ch text{font-size:15px;font-weight:700}
+  .mm-node.mm-branch rect{fill:#f8fafc}
+  .mm-node.mm-branch text{font-weight:600;font-size:13px}
+  .mm-link{fill:none;stroke-opacity:.55;stroke-width:1.6}
+  .mm-node .tog{font-size:11px;fill:#94a3b8;pointer-events:none}
+  #mmHint{text-align:center;font-size:12px;color:var(--muted);margin-top:8px}
 </style>
 </head>
 <body>
@@ -135,14 +191,11 @@
     <div class="side-head">
       <h1>初一数学<em>知识库</em></h1>
       <div class="sub">知识点 · 例题精讲 · 分层题库</div>
-      <div class="side-links">
-        <a href="review.html">📋 上册考点梳理</a>
-        <a href="mindmap.html">🧠 上册思维导图</a>
-      </div>
     </div>
     <style>
-      .side-links{display:flex;gap:8px;padding:10px 18px 0;flex-wrap:wrap}
-      .side-links a{font-size:12.5px;text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:4px 12px;color:var(--brand);background:var(--brand-soft);font-weight:600}
+      .side-links{display:flex;gap:8px;padding:10px 12px 0;flex-wrap:wrap}
+      .side-links a{font-size:12.5px;text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:4px 12px;color:var(--brand);background:var(--brand-soft);font-weight:600;cursor:pointer}
+      .side-links a.on{background:var(--brand);color:#fff;border-color:var(--brand)}
       .side-links a:hover{border-color:var(--brand)}
     </style>
     <div class="search-wrap">
@@ -155,6 +208,18 @@
     <div id="homeView"></div>
     <div id="unitView" style="display:none"></div>
     <div id="searchView"></div>
+    <div id="reviewView" style="display:none"></div>
+    <div id="mindmapView" style="display:none">
+      <div id="mmBar">
+        <button onclick="mmZoomBy(1.2)">＋ 放大</button>
+        <button onclick="mmZoomBy(1/1.2)">－ 缩小</button>
+        <button onclick="mmFit()">⛶ 适应窗口</button>
+        <button onclick="mmSetAll(false)">展开全部</button>
+        <button onclick="mmSetAll(true)">收起全部</button>
+      </div>
+      <div id="mmStage"></div>
+      <div id="mmHint">点击章节 / 分支节点可折叠 · 拖动平移 · 滚轮或按钮缩放</div>
+    </div>
     <footer>人教版七年级数学 · 知识库 & 题库（本地网页，可离线使用）</footer>
   </main>
 </div>
@@ -171,6 +236,7 @@
 <script src="data/ch10.js"></script>
 <script src="data/ch11.js"></script>
 <script src="data/ch12.js"></script>
+<script src="data/review-u.js"></script>
 <script>
 (function(){
   var CHAPTERS = window.CHAPTERS || [];
@@ -178,6 +244,8 @@
   var homeView = document.getElementById('homeView');
   var unitView = document.getElementById('unitView');
   var searchView = document.getElementById('searchView');
+  var reviewView = document.getElementById('reviewView');
+  var mindmapView = document.getElementById('mindmapView');
   var searchInput = document.getElementById('searchInput');
 
   function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
@@ -195,6 +263,10 @@
   /* ---------- 侧边栏 ---------- */
   function buildNav(){
     var html='',cur=route();
+    var v=cur.view||'';
+    html+='<div class="side-links">'+
+      '<a data-nav="review" class="'+(v==='review'?'on':'')+'">📋 上册考点梳理</a>'+
+      '<a data-nav="mindmap" class="'+(v==='mindmap'?'on':'')+'">🧠 上册思维导图</a></div>';
     ['上册','下册'].forEach(function(vol){
       html+='<div class="vol">'+vol+'</div>';
       CHAPTERS.filter(function(c){return c.volume===vol;}).forEach(function(c){
@@ -351,23 +423,28 @@
   /* ---------- 路由 ---------- */
   function route(){
     var h=decodeURIComponent(location.hash.replace(/^#/,''));
+    if(h==='review'||h==='mindmap')return {view:h,ch:'',uId:'',qi:-1};
     var isUnit=h.indexOf('u:')===0;
     if(isUnit)h=h.slice(2);
     else if(h.indexOf('ch:')===0)h=h.slice(3);
     var parts=h.split('?');
     var qi=((parts[1]||'').match(/q=(\d+)/)||[])[1];
     var seg=(parts[0]||'').split('/');
-    return {ch:seg[0]||'',uId:seg[1]||'',qi:qi?parseInt(qi,10):-1};
+    return {view:'',ch:seg[0]||'',uId:seg[1]||'',qi:qi?parseInt(qi,10):-1};
   }
   function go(hash){location.hash=hash;}
   function show(view){
     homeView.style.display=view==='home'?'block':'none';
     unitView.style.display=view==='unit'?'block':'none';
     searchView.style.display=view==='search'?'block':'none';
+    reviewView.style.display=view==='review'?'block':'none';
+    mindmapView.style.display=view==='mindmap'?'block':'none';
     document.getElementById('sidebar').classList.remove('open');
   }
   function render(){
     var r=route();
+    if(r.view==='review'){buildNav();show('review');buildReview();return;}
+    if(r.view==='mindmap'){buildNav();show('mindmap');mmInit();return;}
     // 只给了章节（点章节卡片）→ 打开该章第一节
     if(r.ch&&!r.uId){
       var c=CHAPTERS.filter(function(x){return x.id===r.ch;})[0];
@@ -388,6 +465,11 @@
       go(v||'');
       return;
     }
+    var rchEl=e.target.closest('.r-ch-head');
+    if(rchEl){
+      rchEl.parentElement.classList.toggle('closed');
+      return;
+    }
     var qEl=e.target.closest('.q-item');
     if(qEl&&e.target.closest('.q-head')){
       qEl.classList.toggle('open');
@@ -397,6 +479,155 @@
       if(r.ch&&r.uId)show('unit');else{show('home');buildHome();}
     }
   });
+
+  /* ---------- 考点梳理视图 ---------- */
+  function buildReview(){
+    var R=window.REVIEW_UPPER||[];
+    var html='<div class="r-head"><h2 class="r-title">初一上册 · 考点梳理</h2>'+
+      '<span class="tag" style="cursor:pointer" data-nav="mindmap">🧠 配套思维导图</span></div>'+
+      '<div class="r-sub">人教版七年级上册 6 章 · 逐章梳理复习重点、难点与易错点</div>'+
+      '<div class="legend"><span class="k">⭐ 重点（必考基础）</span><span class="d">🔥 难点（拉开差距）</span><span class="p">⚠ 易错点（丢分陷阱）</span></div>';
+    R.forEach(function(c){
+      function sec(cls,title,arr){
+        if(!arr||!arr.length)return'';
+        return '<div class="sec '+cls+'"><h4>'+title+'</h4><ul>'+arr.map(function(x){return '<li>'+fmt(x)+'</li>';}).join('')+'</ul></div>';
+      }
+      html+='<div class="r-ch"><div class="r-ch-head" data-rch><span class="no">'+esc(c.no)+'</span><h3>'+esc(c.title)+'</h3><span class="arr"></span></div><div class="r-ch-body">'+
+        sec('key','⭐ 重点',c.key)+sec('diff','🔥 难点',c.diff)+sec('pit','⚠ 易错点',c.pit)+
+        '</div></div>';
+    });
+    reviewView.innerHTML=html;
+    window.scrollTo(0,0);
+  }
+
+  /* ---------- 思维导图视图 ---------- */
+  var mmState=null;
+  function mmBuildTree(){
+    var COLORS=['#2563eb','#0891b2','#059669','#d97706','#dc2626','#7c3aed'];
+    var root={t:'初一上册\n数学',level:0,children:[]};
+    (window.REVIEW_UPPER||[]).forEach(function(c,i){
+      var ch={t:'第'+c.no+'章 '+c.title,level:1,color:COLORS[i%COLORS.length],children:[]};
+      (c.branches||[]).forEach(function(b){
+        ch.children.push({t:b.t,level:2,color:ch.color,children:(b.leaves||[]).map(function(l){return{t:l,level:3,children:[]};})});
+      });
+      root.children.push(ch);
+    });
+    return root;
+  }
+  function mmKey(n){if(!n.__k){n.__k='k'+(++mmState.seq);mmState.map[n.__k]=n;}return n.__k;}
+  function mmFind(k){return mmState.map[k];}
+  function mmTextW(t,fs){var lines=String(t).split('\n');var m=0;lines.forEach(function(l){var w=0;for(var i=0;i<l.length;i++)w+=(l.charCodeAt(i)>255?fs:fs*0.55);m=Math.max(m,w);});return m;}
+  function mmEstW(n){var fs=n.level===0?17:n.level===1?15:13;return mmTextW(n.t,fs)+36+(n.level<=1?14:0);}
+  function mmShade(hex,p){
+    var r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+    r=Math.round(r+(255-r)*(1-p));g=Math.round(g+(255-g)*(1-p));b=Math.round(b+(255-b)*(1-p));
+    return '#'+[r,g,b].map(function(v){return ('0'+v.toString(16)).slice(-2);}).join('');
+  }
+  function mmLayout(){
+    var root=mmState.root;
+    (function clear(n){n.x=undefined;n.y=undefined;n.children&&n.children.forEach(clear);})(root);
+    (function size(n){
+      if(!n.children||!n.children.length||n.collapsed){n.h=n.level===0?70:n.level===1?46:34;n.tw=mmEstW(n);return;}
+      var sum=0;n.children.forEach(function(c){size(c);sum+=c.h;});
+      sum+=8*(n.children.length-1);n.h=Math.max(n.level===0?70:n.level===1?46:34,sum);n.kidsH=sum;
+    })(root);
+    (function place(n,yTop,x){
+      n.x=x;n.y=yTop+n.h/2;
+      if(!n.children||!n.children.length||n.collapsed)return;
+      var cy=yTop+((n.h-(n.kidsH||0))/2);
+      n.children.forEach(function(c){place(c,cy,x+n.tw+46);cy+=c.h+8;});
+    })(root,0,0);
+    var right=0,bot=0;
+    (function walk(n){right=Math.max(right,(n.x||0)+(n.tw||0));bot=Math.max(bot,(n.y||0)+(n.h/2||0));(n.children||[]).forEach(walk);})(root);
+    return {w:right+40,h:bot+40};
+  }
+  function mmDraw(){
+    var size=mmLayout();
+    var svgNS='http://www.w3.org/2000/svg';
+    var svg=document.createElementNS(svgNS,'svg');
+    svg.setAttribute('width',Math.max(size.w,800));
+    svg.setAttribute('height',Math.max(size.h,600));
+    var links='',nodes='';
+    (function walk(n){
+      (n.children||[]).forEach(function(c){
+        if(c.x===undefined)return;
+        var x1=(n.x||0)+(n.tw||0),y1=n.y,x2=c.x,y2=c.y;
+        var mx=(x1+x2)/2;
+        links+='<path class="mm-link" d="M'+x1+' '+y1+' C'+mx+' '+y1+','+mx+' '+y2+','+x2+' '+y2+'" stroke="'+(n.level===0?'#1e3a8a':(n.color||'#94a3b8'))+'"/>';
+        walk(c);
+      });
+      if(n.x===undefined)return;
+      var fs=n.level===0?17:n.level===1?15:13;
+      var lines=String(n.t).split('\n');
+      var w=n.tw||100,h=n.h;
+      var cls=n.level===0?'mm-root':n.level===1?'mm-ch':'mm-branch';
+      var hasKids=n.children&&n.children.length;
+      var rectFill='';
+      if(n.level===2)rectFill=' fill="'+mmShade(n.color,.88)+'" stroke="'+n.color+'"';
+      nodes+='<g class="mm-node '+cls+(hasKids?' haskids':'')+'" data-k="'+mmKey(n)+'" transform="translate('+n.x+','+(n.y-h/2)+')">'+
+        '<rect width="'+w+'" height="'+h+'" rx="'+(n.level<=1?12:9)+'"'+rectFill+'/>';
+      lines.forEach(function(l,i){
+        nodes+='<text x="'+(hasKids?12:w/2)+'" y="'+(h/2+(i-(lines.length-1)/2)*1.25*fs+fs*0.35)+'"'+(hasKids?'':' text-anchor="middle"')+'>'+esc(l)+'</text>';
+      });
+      if(hasKids)nodes+='<text class="tog" x="'+(w-16)+'" y="'+(h/2+4)+'">'+(n.collapsed?'▸':'▾')+'</text>';
+      nodes+='</g>';
+    })(mmState.root);
+    svg.innerHTML=links+nodes;
+    svg.addEventListener('click',function(e){
+      var g=e.target.closest('.mm-node.haskids');
+      if(!g)return;
+      var n=mmFind(g.getAttribute('data-k'));
+      if(n){n.collapsed=!n.collapsed;mmDraw();}
+    });
+    var stage=document.getElementById('mmStage');
+    stage.innerHTML='';
+    var inner=document.createElement('div');
+    inner.style.cssText='position:absolute;left:0;top:0;transform-origin:0 0;width:'+svg.getAttribute('width')+'px;height:'+svg.getAttribute('height')+'px';
+    inner.appendChild(svg);
+    stage.appendChild(inner);
+    mmState.inner=inner;
+    mmApply();
+  }
+  function mmStageSize(){
+    var st=document.getElementById('mmStage');
+    return {w:st.clientWidth||window.innerWidth||1200,h:st.clientHeight||window.innerHeight||800};
+  }
+  function mmApply(){
+    if(mmState.inner)mmState.inner.style.transform='translate('+mmState.tx+'px,'+mmState.ty+'px) scale('+mmState.scale+')';
+  }
+  window.mmZoomBy=function(f){
+    var s=mmStageSize();
+    var cx=s.w/2,cy=s.h/2;
+    mmState.tx=cx-(cx-mmState.tx)*f;mmState.ty=cy-(cy-mmState.ty)*f;mmState.scale*=f;mmApply();
+  };
+  window.mmFit=function(){
+    if(!mmState.inner)return;
+    var s=mmStageSize();
+    var W=parseFloat(mmState.inner.style.width),H=parseFloat(mmState.inner.style.height);
+    mmState.scale=Math.min(s.w/W,s.h/H,1.1)*0.96;
+    if(!isFinite(mmState.scale)||mmState.scale<=0)mmState.scale=1;
+    mmState.tx=(s.w-W*mmState.scale)/2;mmState.ty=(s.h-H*mmState.scale)/2;
+    mmApply();
+  };
+  window.mmSetAll=function(collapsed){
+    (function walk(n){if(n.children&&n.children.length&&n.level>0)n.collapsed=collapsed;n.children&&n.children.forEach(walk);})(mmState.root);
+    mmDraw();
+    if(!collapsed)mmFit();
+  };
+  function mmInit(){
+    if(!mmState)mmState={root:mmBuildTree(),map:{},seq:0,scale:1,tx:0,ty:0,inner:null};
+    var stage=document.getElementById('mmStage');
+    if(!stage.dataset.bound){
+      stage.dataset.bound='1';
+      var drag=null;
+      stage.addEventListener('mousedown',function(e){drag={x:e.clientX,y:e.clientY,tx:mmState.tx,ty:mmState.ty};stage.classList.add('dragging');});
+      window.addEventListener('mousemove',function(e){if(!drag)return;mmState.tx=drag.tx+e.clientX-drag.x;mmState.ty=drag.ty+e.clientY-drag.ty;mmApply();});
+      window.addEventListener('mouseup',function(){drag=null;stage.classList.remove('dragging');});
+      stage.addEventListener('wheel',function(e){e.preventDefault();mmZoomBy(e.deltaY<0?1.12:1/1.12);},{passive:false});
+    }
+    mmDraw();
+    setTimeout(mmFit,50);
+  }
 
   render();
 })();
