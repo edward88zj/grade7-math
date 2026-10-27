@@ -135,7 +135,16 @@
     <div class="side-head">
       <h1>初一数学<em>知识库</em></h1>
       <div class="sub">知识点 · 例题精讲 · 分层题库</div>
+      <div class="side-links">
+        <a href="review.html">📋 上册考点梳理</a>
+        <a href="mindmap.html">🧠 上册思维导图</a>
+      </div>
     </div>
+    <style>
+      .side-links{display:flex;gap:8px;padding:10px 18px 0;flex-wrap:wrap}
+      .side-links a{font-size:12.5px;text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:4px 12px;color:var(--brand);background:var(--brand-soft);font-weight:600}
+      .side-links a:hover{border-color:var(--brand)}
+    </style>
     <div class="search-wrap">
       <input id="searchInput" type="search" placeholder="🔍 搜索知识点 / 题目，如：绝对值、一元一次方程…">
     </div>
