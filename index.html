@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>初一数学知识库 · 讲解与题库</title>
+<style>
+  :root{
+    --bg:#f5f7fb; --panel:#ffffff; --ink:#1f2937; --muted:#6b7280;
+    --brand:#2563eb; --brand-soft:#eff6ff; --line:#e5e7eb;
+    --green:#059669; --green-soft:#ecfdf5; --amber:#b45309; --amber-soft:#fffbeb;
+    --red:#dc2626; --red-soft:#fef2f2; --purple:#7c3aed; --purple-soft:#f5f3ff;
+    --radius:12px; --shadow:0 1px 3px rgba(15,23,42,.08);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.75}
+  a{color:var(--brand);text-decoration:none}
+
+  /* ---------- 布局 ---------- */
+  .layout{display:flex;min-height:100vh}
+  aside{width:290px;flex-shrink:0;background:var(--panel);border-right:1px solid var(--line);height:100vh;position:sticky;top:0;display:flex;flex-direction:column}
+  main{flex:1;min-width:0;padding:28px 40px 80px}
+  @media (max-width:900px){
+    aside{position:fixed;left:0;top:0;z-index:50;transform:translateX(-100%);transition:transform .25s}
+    aside.open{transform:none;box-shadow:0 0 40px rgba(0,0,0,.2)}
+    main{padding:20px 18px 60px}
+    #menuBtn{display:inline-flex}
+  }
+  #menuBtn{display:none;align-items:center;gap:6px;border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:14px}
+
+  /* ---------- 侧边栏 ---------- */
+  .side-head{padding:18px 18px 10px;border-bottom:1px solid var(--line)}
+  .side-head h1{font-size:19px;letter-spacing:.5px}
+  .side-head h1 em{font-style:normal;color:var(--brand)}
+  .side-head .sub{font-size:12px;color:var(--muted);margin-top:2px}
+  .search-wrap{padding:12px 14px;border-bottom:1px solid var(--line)}
+  .search-wrap input{width:100%;border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:14px;outline:none;background:var(--bg)}
+  .search-wrap input:focus{border-color:var(--brand);background:#fff}
+  nav{flex:1;overflow-y:auto;padding:10px 10px 30px}
+  .vol{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:2px;margin:14px 10px 6px}
+  .chapter-item{border-radius:9px;margin-bottom:2px}
+  .chapter-item>a{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-radius:9px;color:var(--ink);font-weight:600;font-size:14px;cursor:pointer}
+  .chapter-item>a:hover{background:var(--brand-soft)}
+  .chapter-item.active>a{background:var(--brand);color:#fff}
+  .chapter-item .no{font-size:12px;opacity:.65;margin-right:8px;font-weight:400}
+  .chapter-item .prog{font-size:11px;font-weight:400;opacity:.75}
+  .unit-list{display:none;padding:2px 0 6px}
+  .chapter-item.expanded .unit-list{display:block}
+  .unit-list a{display:block;padding:5px 12px 5px 34px;font-size:13.5px;color:var(--muted);border-radius:7px}
+  .unit-list a:hover{color:var(--brand);background:var(--brand-soft)}
+  .unit-list a.active{color:var(--brand);font-weight:600;background:var(--brand-soft)}
+
+  /* ---------- 首页 ---------- */
+  .home-hero{background:linear-gradient(135deg,#2563eb,#7c3aed);border-radius:16px;color:#fff;padding:34px 36px;margin-bottom:24px}
+  .home-hero h2{font-size:26px;margin-bottom:8px}
+  .home-hero p{opacity:.92;max-width:640px}
+  .home-stats{display:flex;gap:14px;margin-top:18px;flex-wrap:wrap}
+  .home-stats div{background:rgba(255,255,255,.16);border-radius:10px;padding:8px 18px;font-size:14px}
+  .home-stats b{font-size:20px;margin-right:4px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+  .vol-title{font-size:16px;font-weight:700;margin:22px 0 10px;color:var(--muted);letter-spacing:1px}
+  .ch-card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px;cursor:pointer;box-shadow:var(--shadow);transition:transform .15s}
+  .ch-card:hover{transform:translateY(-2px);border-color:var(--brand)}
+  .ch-card .no{display:inline-block;background:var(--brand-soft);color:var(--brand);border-radius:6px;font-size:12px;font-weight:700;padding:1px 8px;margin-bottom:8px}
+  .ch-card h3{font-size:16px;margin-bottom:6px}
+  .ch-card p{font-size:12.5px;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .ch-card .meta{margin-top:10px;font-size:12px;color:var(--muted);display:flex;gap:12px}
+  .ch-card .meta b{color:var(--green)}
+
+  /* ---------- 内容区 ---------- */
+  .crumb{font-size:13px;color:var(--muted);margin-bottom:14px}
+  .unit-head h2{font-size:24px;margin-bottom:6px}
+  .unit-head .tags{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+  .tag{font-size:12px;border-radius:999px;padding:2px 11px;background:var(--brand-soft);color:var(--brand);font-weight:600}
+  .tag.warn{background:var(--amber-soft);color:var(--amber)}
+  .tag.purple{background:var(--purple-soft);color:var(--purple)}
+  section.block{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:20px 24px;margin-bottom:18px;box-shadow:var(--shadow)}
+  section.block>h3{font-size:16.5px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  section.block>h3::before{content:"";width:4px;height:18px;border-radius:2px;background:var(--brand);display:inline-block}
+  section.block.example>h3::before{background:var(--purple)}
+  section.block.qbank>h3::before{background:var(--green)}
+  .kp{margin-bottom:14px}
+  .kp:last-child{margin-bottom:0}
+  .kp b{color:var(--brand)}
+  .kp p{margin:2px 0}
+  .kp .f{font-family:ui-monospace,Consolas,monospace;background:var(--bg);border:1px dashed var(--line);border-radius:8px;padding:8px 14px;margin:6px 0;white-space:pre-wrap}
+  ul.formulas{list-style:none}
+  ul.formulas li{padding:6px 0 6px 20px;position:relative;border-bottom:1px dashed var(--line)}
+  ul.formulas li:last-child{border-bottom:none}
+  ul.formulas li::before{content:"◆";position:absolute;left:2px;color:var(--brand);font-size:11px;top:9px}
+  ul.formulas b{font-family:ui-monospace,Consolas,monospace;background:var(--brand-soft);padding:0 5px;border-radius:4px;color:var(--brand)}
+
+  .example .ex-q{background:var(--purple-soft);border-radius:9px;padding:12px 16px;margin-bottom:12px;font-weight:600}
+  .steps li{margin:8px 0 8px 20px}
+  .steps b{color:var(--purple)}
+  .ex-note{background:var(--amber-soft);border-left:3px solid var(--amber);border-radius:0 8px 8px 0;padding:9px 14px;font-size:13.5px;margin-top:12px}
+  .ex-note b{color:var(--amber)}
+
+  .q-item{border:1px solid var(--line);border-radius:10px;margin-bottom:12px;overflow:hidden}
+  .q-head{display:flex;align-items:flex-start;gap:10px;padding:12px 16px;cursor:pointer}
+  .q-head:hover{background:var(--bg)}
+  .q-no{flex-shrink:0;width:26px;height:26px;border-radius:8px;background:var(--brand-soft);color:var(--brand);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .q-text{flex:1}
+  .q-text .diff{display:inline-block;font-size:11px;font-weight:700;border-radius:5px;padding:0 7px;margin-right:8px;vertical-align:1px}
+  .diff.基础{background:var(--green-soft);color:var(--green)}
+  .diff.提高{background:var(--amber-soft);color:var(--amber)}
+  .diff.拓展{background:var(--red-soft);color:var(--red)}
+  .q-toggle{flex-shrink:0;font-size:12px;color:var(--brand);font-weight:600;margin-top:4px;white-space:nowrap}
+  .q-body{display:none;border-top:1px dashed var(--line);background:var(--bg);padding:14px 18px 14px 52px}
+  .q-item.open .q-body{display:block}
+  .q-body h5{font-size:13px;color:var(--green);margin-bottom:6px}
+  .q-body ol{margin-left:18px}
+  .q-body li{margin:4px 0}
+  .q-tip{margin-top:10px;background:var(--amber-soft);border-left:3px solid var(--amber);border-radius:0 8px 8px 0;padding:8px 13px;font-size:13px}
+  .q-tip b{color:var(--amber)}
+
+  /* ---------- 搜索结果 ---------- */
+  #searchView{display:none}
+  #searchView h2{font-size:20px;margin-bottom:14px}
+  .s-group{font-size:13px;font-weight:700;color:var(--muted);margin:16px 0 8px;letter-spacing:1px}
+  .s-item{display:block;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin-bottom:8px;cursor:pointer;color:var(--ink)}
+  .s-item:hover{border-color:var(--brand)}
+  .s-item .s-type{font-size:11px;font-weight:700;border-radius:5px;padding:0 6px;margin-right:8px}
+  .s-type.kp{background:var(--brand-soft);color:var(--brand)}
+  .s-type.q{background:var(--green-soft);color:var(--green)}
+  .s-item .s-path{font-size:12px;color:var(--muted);margin-top:3px}
+  .no-result{color:var(--muted);padding:30px 0;text-align:center}
+
+  footer{margin-top:40px;text-align:center;font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside id="sidebar">
+    <div class="side-head">
+      <h1>初一数学<em>知识库</em></h1>
+      <div class="sub">知识点 · 例题精讲 · 分层题库</div>
+    </div>
+    <div class="search-wrap">
+      <input id="searchInput" type="search" placeholder="🔍 搜索知识点 / 题目，如：绝对值、一元一次方程…">
+    </div>
+    <nav id="nav"></nav>
+  </aside>
+  <main>
+    <button id="menuBtn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰ 目录</button>
+    <div id="homeView"></div>
+    <div id="unitView" style="display:none"></div>
+    <div id="searchView"></div>
+    <footer>人教版七年级数学 · 知识库 & 题库（本地网页，可离线使用）</footer>
+  </main>
+</div>
+
+<script src="data/ch01.js"></script>
+<script src="data/ch02.js"></script>
+<script src="data/ch03.js"></script>
+<script src="data/ch04.js"></script>
+<script src="data/ch05.js"></script>
+<script src="data/ch06.js"></script>
+<script src="data/ch07.js"></script>
+<script src="data/ch08.js"></script>
+<script src="data/ch09.js"></script>
+<script src="data/ch10.js"></script>
+<script src="data/ch11.js"></script>
+<script src="data/ch12.js"></script>
+<script>
+(function(){
+  var CHAPTERS = window.CHAPTERS || [];
+  var nav = document.getElementById('nav');
+  var homeView = document.getElementById('homeView');
+  var unitView = document.getElementById('unitView');
+  var searchView = document.getElementById('searchView');
+  var searchInput = document.getElementById('searchInput');
+
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  // 题干允许 *x* 表示强调（渲染为 <b>），避免裸 HTML
+  function fmt(s){return esc(s).replace(/\*([^*]+)\*/g,'<b>$1</b>');}
+  function doneKey(qid){return 'zd_math_done:'+qid;}
+  function isDone(qid){try{return localStorage.getItem(doneKey(qid))==='1';}catch(e){return false;}}
+  function setDone(qid,v){try{v?localStorage.setItem(doneKey(qid),'1'):localStorage.removeItem(doneKey(qid));}catch(e){}}
+
+  function allQuestions(){
+    var arr=[];CHAPTERS.forEach(function(c){(c.units||[]).forEach(function(u){(u.questions||[]).forEach(function(q,i){arr.push({ch:c,u:u,q:q,i:i});});});});return arr;
+  }
+  function qid(ch,u,i){return ch.id+'/'+u.id+'/q'+i;}
+
+  /* ---------- 侧边栏 ---------- */
+  function buildNav(){
+    var html='',cur=route();
+    ['上册','下册'].forEach(function(vol){
+      html+='<div class="vol">'+vol+'</div>';
+      CHAPTERS.filter(function(c){return c.volume===vol;}).forEach(function(c){
+        var total=0,cnt=0;
+        (c.units||[]).forEach(function(u){(u.questions||[]).forEach(function(q,i){total++;if(isDone(qid(c,u,i)))cnt++;});});
+        var activeCh = cur.ch===c.id;
+        html+='<div class="chapter-item'+(activeCh?' active expanded':'')+'" data-ch="'+c.id+'">'+
+          '<a data-nav="ch:'+c.id+'"><span><span class="no">'+c.no+'</span>'+esc(c.title)+'</span>'+
+          '<span class="prog">'+(cnt?cnt+'/':'')+total+'</span></a><div class="unit-list">';
+        (c.units||[]).forEach(function(u){
+          html+='<a data-nav="u:'+c.id+'/'+u.id+'"'+(cur.u===u.id&&cur.ch===c.id?' class="active"':'')+'>'+esc(u.title)+'</a>';
+        });
+        html+='</div></div>';
+      });
+    });
+    nav.innerHTML=html;
+  }
+
+  /* ---------- 首页 ---------- */
+  function buildHome(){
+    var qs=allQuestions();
+    var done=0;qs.forEach(function(o){if(isDone(qid(o.ch,o.u,o.i)))done++;});
+    var html='<div class="home-hero"><h2>初一数学 · 知识库与题库</h2>'+
+      '<p>覆盖人教版七年级上、下册全部核心章节：每个知识点配备<b>概念讲解、公式卡、例题精讲</b>，以及<b>基础 / 提高 / 拓展三层题库</b>，每题附完整步骤详解与易错点提示。点击题目可展开解析，再次点击收起。</p>'+
+      '<div class="home-stats">'+
+      '<div><b>'+CHAPTERS.length+'</b>章节</div>'+
+      '<div><b>'+CHAPTERS.reduce(function(s,c){return s+(c.units||[]).length;},0)+'</b>知识点单元</div>'+
+      '<div><b>'+qs.length+'</b>道精选题</div>'+
+      '<div><b>'+done+'</b>已完成</div>'+
+      '</div></div>';
+    ['上册','下册'].forEach(function(vol){
+      var list=CHAPTERS.filter(function(c){return c.volume===vol;});
+      if(!list.length)return;
+      html+='<div class="vol-title">'+vol+'</div><div class="grid">';
+      list.forEach(function(c){
+        var nq=(c.units||[]).reduce(function(s,u){return s+(u.questions||[]).length;},0);
+        html+='<div class="ch-card" data-nav="ch:'+c.id+'"><span class="no">第'+c.no+'章</span>'+
+          '<h3>'+esc(c.title)+'</h3><p>'+esc(c.intro||'')+'</p>'+
+          '<div class="meta"><span>'+(c.units||[]).length+' 个知识点</span><span><b>'+nq+'</b> 道题</span></div></div>';
+      });
+      html+='</div>';
+    });
+    homeView.innerHTML=html;
+  }
+
+  /* ---------- 单元页 ---------- */
+  function buildUnit(chId,uId,qi){
+    var c=CHAPTERS.filter(function(x){return x.id===chId;})[0];
+    if(!c){go('');return;}
+    var u=(c.units||[]).filter(function(x){return x.id===uId;})[0]||c.units[0];
+    var html='<div class="crumb"><a data-nav="">首页</a> / '+esc(c.title)+' / <span style="color:var(--brand)">'+esc(u.title)+'</span></div>'+
+      '<div class="unit-head"><h2>'+esc(u.title)+'</h2><div class="tags">'+
+      '<span class="tag">第'+c.no+'章 · '+esc(c.title)+'</span>'+
+      (u.diff?'<span class="tag warn">难度：'+esc(u.diff)+'</span>':'')+
+      (u.exam?'<span class="tag purple">考点：'+esc(u.exam)+'</span>':'')+
+      '</div></div>';
+    if(u.summary){
+      html+='<section class="block"><h3>单元导读</h3><div class="kp">'+fmt(u.summary)+'</div></section>';
+    }
+    if(u.points&&u.points.length){
+      html+='<section class="block"><h3>知识点讲解</h3>';
+      u.points.forEach(function(p){
+        html+='<div class="kp"><b>'+esc(p.t)+'</b>';
+        if(p.d)html+='<p>'+fmt(p.d)+'</p>';
+        if(p.f)html+='<div class="f">'+fmt(p.f)+'</div>';
+        if(p.warn)html+='<p style="color:var(--amber);font-size:13.5px">⚠ '+fmt(p.warn)+'</p>';
+        html+='</div>';
+      });
+      html+='</section>';
+    }
+    if(u.formulas&&u.formulas.length){
+      html+='<section class="block"><h3>公式 / 法则速查</h3><ul class="formulas">';
+      u.formulas.forEach(function(f){html+='<li>'+fmt(f)+'</li>';});
+      html+='</ul></section>';
+    }
+    if(u.example){
+      html+='<section class="block example"><h3>例题精讲</h3><div class="ex-q">'+fmt(u.example.q)+'</div><ol class="steps">';
+      (u.example.steps||[]).forEach(function(s){html+='<li>'+fmt(s)+'</li>';});
+      html+='</ol>';
+      if(u.example.note)html+='<div class="ex-note"><b>易错提醒：</b>'+fmt(u.example.note)+'</div>';
+      html+='</section>';
+    }
+    if(u.questions&&u.questions.length){
+      html+='<section class="block qbank"><h3>分层题库（点击题目查看 / 收起详解）</h3>';
+      u.questions.forEach(function(q,i){
+        var id=qid(c,u,i),open=isDone(id);
+        html+='<div class="q-item'+(open?' open':'')+'" data-q="'+id+'"><div class="q-head">'+
+          '<span class="q-no">'+(i+1)+'</span><div class="q-text"><span class="diff '+esc(q.diff)+'">'+esc(q.diff)+'</span>'+fmt(q.q)+'</div>'+
+          '<span class="q-toggle">查看详解 ▾</span></div><div class="q-body"><h5>【详解】</h5><ol>';
+        (q.ans||[]).forEach(function(a){html+='<li>'+fmt(a)+'</li>';});
+        html+='</ol>';
+        if(q.tip)html+='<div class="q-tip"><b>易错点：</b>'+fmt(q.tip)+'</div>';
+        html+='</div></div>';
+      });
+      html+='</section>';
+    }
+    // 上下单元导航
+    var flat=[];CHAPTERS.forEach(function(cc){(cc.units||[]).forEach(function(uu){flat.push({ch:cc.id,u:uu.id});});});
+    var idx=flat.findIndex(function(x){return x.ch===c.id&&x.u===u.id;});
+    html+='<div style="display:flex;justify-content:space-between;margin-top:24px">';
+    if(idx>0)html+='<a data-nav="u:'+flat[idx-1].ch+'/'+flat[idx-1].u+'">← 上一节：'+esc((CHAPTERS.filter(function(x){return x.id===flat[idx-1].ch;})[0].units.filter(function(x){return x.id===flat[idx-1].u;})[0]||{}).title||'')+'</a>';
+    else html+='<span></span>';
+    if(idx<flat.length-1)html+='<a data-nav="u:'+flat[idx+1].ch+'/'+flat[idx+1].u+'">下一节：'+esc((CHAPTERS.filter(function(x){return x.id===flat[idx+1].ch;})[0].units.filter(function(x){return x.id===flat[idx+1].u;})[0]||{}).title||'')+' →</a>';
+    html+='</div>';
+    unitView.innerHTML=html;
+    if(qi>=0){
+      var qEl=unitView.querySelector('[data-q="'+c.id+'/'+u.id+'/q'+qi+'"]');
+      if(qEl){
+        qEl.classList.add('open');
+        setTimeout(function(){qEl.scrollIntoView({behavior:'smooth',block:'center'});},120);
+        return;
+      }
+    }
+    window.scrollTo(0,0);
+  }
+
+  /* ---------- 搜索 ---------- */
+  var searchTimer=null;
+  searchInput.addEventListener('input',function(){
+    clearTimeout(searchTimer);
+    searchTimer=setTimeout(function(){doSearch(searchInput.value.trim());},200);
+  });
+  function doSearch(kw){
+    if(!kw){show('home');return;}
+    var hits=[];
+    CHAPTERS.forEach(function(c){
+      (c.units||[]).forEach(function(u){
+        if((u.title+' '+(u.summary||'')).indexOf(kw)>-1||(u.exam||'').indexOf(kw)>-1)
+          hits.push({type:'kp',ch:c,u:u,text:esc(u.title)+' — '+esc((u.summary||'').slice(0,60))});
+        (u.points||[]).forEach(function(p){
+          if((p.t+' '+(p.d||'')).indexOf(kw)>-1)
+            hits.push({type:'kp',ch:c,u:u,text:'<b>'+esc(p.t)+'</b>：'+esc((p.d||'').replace(/\*[^*]*\*/g,'').slice(0,70))});
+        });
+        (u.questions||[]).forEach(function(q,i){
+          if(q.q.indexOf(kw)>-1||(q.tip||'').indexOf(kw)>-1)
+            hits.push({type:'q',ch:c,u:u,qi:i,text:esc(q.q.replace(/\*[^*]*\*/g,'').slice(0,80)),diff:q.diff});
+        });
+      });
+    });
+    show('search');
+    var html='<h2>搜索“'+esc(kw)+'” — 共 '+hits.length+' 条结果</h2>';
+    if(!hits.length){html+='<div class="no-result">未找到相关内容，换个关键词试试（如：绝对值、数轴、方程、平行线）</div>';}
+    else{
+      html+=hits.slice(0,60).map(function(h){
+        return '<a class="s-item" data-nav="u:'+h.ch.id+'/'+h.u.id+(h.type==='q'?'?q='+h.qi:'')+'">'+
+          '<span class="s-type '+h.type+'">'+(h.type==='kp'?'知识点':(h.diff||'')+'题')+'</span>'+h.text+
+          '<div class="s-path">'+esc(h.ch.title)+' · '+esc(h.u.title)+'</div></a>';
+      }).join('');
+      if(hits.length>60)html+='<div class="no-result">仅显示前 60 条，请缩小关键词范围</div>';
+    }
+    searchView.innerHTML=html;
+  }
+
+  /* ---------- 路由 ---------- */
+  function route(){
+    var h=decodeURIComponent(location.hash.replace(/^#/,''));
+    var isUnit=h.indexOf('u:')===0;
+    if(isUnit)h=h.slice(2);
+    else if(h.indexOf('ch:')===0)h=h.slice(3);
+    var parts=h.split('?');
+    var qi=((parts[1]||'').match(/q=(\d+)/)||[])[1];
+    var seg=(parts[0]||'').split('/');
+    return {ch:seg[0]||'',uId:seg[1]||'',qi:qi?parseInt(qi,10):-1};
+  }
+  function go(hash){location.hash=hash;}
+  function show(view){
+    homeView.style.display=view==='home'?'block':'none';
+    unitView.style.display=view==='unit'?'block':'none';
+    searchView.style.display=view==='search'?'block':'none';
+    document.getElementById('sidebar').classList.remove('open');
+  }
+  function render(){
+    var r=route();
+    // 只给了章节（点章节卡片）→ 打开该章第一节
+    if(r.ch&&!r.uId){
+      var c=CHAPTERS.filter(function(x){return x.id===r.ch;})[0];
+      if(c&&c.units&&c.units.length){location.replace('#u:'+c.id+'/'+c.units[0].id);return;}
+    }
+    buildNav();
+    if(r.ch&&r.uId){show('unit');buildUnit(r.ch,r.uId,route().qi);}
+    else{show('home');buildHome();}
+  }
+  window.addEventListener('hashchange',render);
+
+  /* ---------- 事件委托 ---------- */
+  document.addEventListener('click',function(e){
+    var navEl=e.target.closest('[data-nav]');
+    if(navEl){
+      e.preventDefault();
+      var v=navEl.getAttribute('data-nav');
+      go(v||'');
+      return;
+    }
+    var qEl=e.target.closest('.q-item');
+    if(qEl&&e.target.closest('.q-head')){
+      qEl.classList.toggle('open');
+      setDone(qEl.getAttribute('data-q'),qEl.classList.contains('open'));
+      var r=route();buildNav();
+      // 保留当前内容，不重渲染正文
+      if(r.ch&&r.uId)show('unit');else{show('home');buildHome();}
+    }
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
