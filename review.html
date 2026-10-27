@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>初一上册 · 考点梳理（重点 / 难点 / 易错点）</title>
+<style>
+  :root{
+    --bg:#f5f7fb; --panel:#fff; --ink:#1f2937; --muted:#6b7280;
+    --brand:#2563eb; --brand-soft:#eff6ff; --line:#e5e7eb;
+    --red:#dc2626; --red-soft:#fef2f2; --amber:#b45309; --amber-soft:#fffbeb;
+    --purple:#7c3aed; --purple-soft:#f5f3ff; --green:#059669;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.75;padding:26px 20px 60px}
+  .wrap{max-width:980px;margin:0 auto}
+  .top{display:flex;align-items:center;gap:14px;margin-bottom:6px;flex-wrap:wrap}
+  .top a{font-size:14px;text-decoration:none}
+  .back{color:var(--brand)}
+  .btn{background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff;border-radius:999px;padding:7px 18px;font-weight:600;box-shadow:0 2px 8px rgba(124,58,237,.3)}
+  h1{font-size:26px;margin-bottom:4px}
+  .sub{color:var(--muted);font-size:14px;margin-bottom:22px}
+  .legend{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+  .legend span{font-size:13px;border-radius:999px;padding:4px 14px;font-weight:600}
+  .legend .k{background:var(--brand-soft);color:var(--brand)}
+  .legend .d{background:var(--purple-soft);color:var(--purple)}
+  .legend .p{background:var(--amber-soft);color:var(--amber)}
+  .ch{background:var(--panel);border:1px solid var(--line);border-radius:14px;margin-bottom:20px;overflow:hidden;box-shadow:0 1px 3px rgba(15,23,42,.08)}
+  .ch-head{display:flex;align-items:center;gap:12px;padding:14px 20px;background:linear-gradient(90deg,var(--brand-soft),transparent);cursor:pointer;user-select:none}
+  .ch-head .no{background:var(--brand);color:#fff;border-radius:8px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0}
+  .ch-head h2{font-size:18px;flex:1}
+  .ch-head .arr{color:var(--muted);font-size:13px;transition:transform .2s}
+  .ch.closed .ch-head .arr{transform:rotate(-90deg)}
+  .ch-body{padding:4px 20px 18px}
+  .ch.closed .ch-body{display:none}
+  .sec{margin-top:14px}
+  .sec h3{font-size:14.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+  .sec.key h3{color:var(--brand)} .sec.diff h3{color:var(--purple)} .sec.pit h3{color:var(--amber)}
+  .sec.key{background:var(--brand-soft);border-radius:10px;padding:12px 16px}
+  .sec.diff{background:var(--purple-soft);border-radius:10px;padding:12px 16px}
+  .sec.pit{background:var(--amber-soft);border-left:3px solid var(--amber);border-radius:0 10px 10px 0;padding:12px 16px}
+  .sec ul{list-style:none}
+  .sec li{padding:4px 0 4px 20px;position:relative}
+  .sec.key li::before{content:"";position:absolute;left:4px;top:13px;width:7px;height:7px;border-radius:50%;background:var(--brand)}
+  .sec.diff li::before{content:"";position:absolute;left:4px;top:13px;width:7px;height:7px;border-radius:50%;background:var(--purple)}
+  .sec.pit li::before{content:"✗";position:absolute;left:0;top:4px;font-size:12px;color:var(--amber);font-weight:700}
+  b{color:inherit}
+  .sec.key b{color:var(--brand)} .sec.diff b{color:var(--purple)} .sec.pit b{color:var(--amber)}
+  footer{margin-top:30px;text-align:center;font-size:12px;color:var(--muted)}
+  @media print{.top,.legend{display:none}.ch.closed .ch-body{display:block}.ch{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a class="back" href="index.html">← 返回知识库</a>
+    <a class="btn" href="mindmap.html">🧠 打开思维导图</a>
+    <a href="#" onclick="window.print()" style="font-size:13px;color:var(--muted)">🖨 打印本页</a>
+  </div>
+  <h1>初一上册 · 考点梳理</h1>
+  <div class="sub">人教版七年级上册 6 章 · 逐章梳理复习重点、难点与易错点，配合思维导图使用</div>
+  <div class="legend"><span class="k">⭐ 重点（必考基础）</span><span class="d">🔥 难点（拉开差距）</span><span class="p">⚠ 易错点（丢分陷阱）</span></div>
+  <div id="app"></div>
+  <footer>初一数学知识库 · 考点梳理</footer>
+</div>
+<script src="data/review-u.js"></script>
+<script>
+(function(){
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function fmt(s){return esc(s).replace(/\*([^*]+)\*/g,'<b>$1</b>');}
+  var app=document.getElementById('app');
+  var html='';
+  (window.REVIEW_UPPER||[]).forEach(function(c){
+    html+='<div class="ch" id="'+c.id+'"><div class="ch-head" data-t><span class="no">'+esc(c.no)+'</span><h2>'+esc(c.title)+'</h2><span class="arr">▾ 展开</span></div><div class="ch-body">';
+    function sec(cls,title,arr){
+      if(!arr||!arr.length)return'';
+      return '<div class="sec '+cls+'"><h3>'+title+'</h3><ul>'+arr.map(function(x){return '<li>'+fmt(x)+'</li>';}).join('')+'</ul></div>';
+    }
+    html+=sec('key','⭐ 重点',c.key)+sec('diff','🔥 难点',c.diff)+sec('pit','⚠ 易错点',c.pit);
+    html+='</div></div>';
+  });
+  app.innerHTML=html;
+  document.addEventListener('click',function(e){
+    var h=e.target.closest('.ch-head');
+    if(!h)return;
+    var ch=h.parentElement;
+    ch.classList.toggle('closed');
+    h.querySelector('.arr').textContent=ch.classList.contains('closed')?'▸ 展开':'▾ 展开';
+  });
+})();
+</script>
+</body>
+</html>
