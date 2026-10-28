@@ -33,6 +33,9 @@
   .ch.closed .ch-head .arr{transform:rotate(-90deg)}
   .ch-body{padding:4px 20px 18px}
   .ch.closed .ch-body{display:none}
+  .secs{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 4px}
+  .secs span{font-size:12px;color:var(--brand);background:#f1f5f9;border:1px solid var(--line);border-radius:999px;padding:2px 10px}
+  .ln{margin-top:12px;font-size:13px;line-height:1.7;background:#ecfdf5;border-left:3px solid var(--green);border-radius:0 8px 8px 0;padding:8px 12px;color:#065f46}
   .sec{margin-top:14px}
   .sec h3{font-size:14.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
   .sec.key h3{color:var(--brand)} .sec.diff h3{color:var(--purple)} .sec.pit h3{color:var(--amber)}
@@ -58,7 +61,7 @@
     <a href="#" onclick="window.print()" style="font-size:13px;color:var(--muted)">🖨 打印本页</a>
   </div>
   <h1>初一上册 · 考点梳理</h1>
-  <div class="sub">人教版七年级上册 6 章 · 逐章梳理复习重点、难点与易错点，配合思维导图使用</div>
+  <div class="sub">人教版（2024 新版）七年级上册 · 6 章 18 小节 · 逐节梳理重点、难点与易错点，并标注辽宁中考 / 大连考情</div>
   <div class="legend"><span class="k">⭐ 重点（必考基础）</span><span class="d">🔥 难点（拉开差距）</span><span class="p">⚠ 易错点（丢分陷阱）</span></div>
   <div id="app"></div>
   <footer>初一数学知识库 · 考点梳理</footer>
@@ -76,6 +79,10 @@
       if(!arr||!arr.length)return'';
       return '<div class="sec '+cls+'"><h3>'+title+'</h3><ul>'+arr.map(function(x){return '<li>'+fmt(x)+'</li>';}).join('')+'</ul></div>';
     }
+    if(c.secs&&c.secs.length){
+      html+='<div class="secs">'+c.secs.map(function(s){return '<span>'+esc(s)+'</span>';}).join('')+'</div>';
+    }
+    if(c.ln)html+='<div class="ln">'+fmt(c.ln)+'</div>';
     html+=sec('key','⭐ 重点',c.key)+sec('diff','🔥 难点',c.diff)+sec('pit','⚠ 易错点',c.pit);
     html+='</div></div>';
   });
