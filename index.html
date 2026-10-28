@@ -117,6 +117,32 @@
   .q-tip{margin-top:10px;background:var(--amber-soft);border-left:3px solid var(--amber);border-radius:0 8px 8px 0;padding:8px 13px;font-size:13px}
   .q-tip b{color:var(--amber)}
 
+  /* ---------- 新板块：教材例题 / 易错 / 难点 / 中考 / 月考 ---------- */
+  .ex-box{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:14px;background:var(--bg)}
+  .ex-box:last-child{margin-bottom:0}
+  .ex-src{display:inline-block;font-size:11px;font-weight:700;background:var(--purple);color:#fff;border-radius:5px;padding:1px 9px;margin-bottom:8px}
+  section.block.pit>h3::before{background:var(--amber)}
+  section.block.hard>h3::before{background:var(--purple)}
+  section.block.zhongkao>h3::before{background:var(--red)}
+  section.block.yuekao>h3::before{background:#0891b2}
+  section.block.extension>h3::before{background:var(--green)}
+  .pit-list,.hard-list{list-style:none}
+  .pit-list li{padding:7px 4px 7px 26px;position:relative;border-bottom:1px dashed var(--line)}
+  .pit-list li:last-child{border-bottom:none}
+  .pit-list li::before{content:"⚠";position:absolute;left:0;top:5px;color:var(--amber);font-size:13px}
+  .pit-list b{color:var(--amber)}
+  .hard-list li{padding:7px 4px 7px 26px;position:relative;border-bottom:1px dashed var(--line)}
+  .hard-list li:last-child{border-bottom:none}
+  .hard-list li::before{content:"🔥";position:absolute;left:2px;top:6px;font-size:12px}
+  .hard-list b{color:var(--purple)}
+  .src-badge{display:inline-block;font-size:11px;font-weight:700;border-radius:5px;padding:0 7px;margin-right:8px;vertical-align:1px}
+  .src-badge.zk{background:var(--red-soft);color:var(--red)}
+  .src-badge.yk{background:#e0f2fe;color:#0369a1}
+  .diff.中考{background:var(--red-soft);color:var(--red)}
+  .diff.月考{background:#e0f2fe;color:#0369a1}
+  .unit-list a{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .unit-list a .uq{font-size:11px;color:#b6bdc9;flex-shrink:0;font-weight:400}
+
   /* ---------- 搜索结果 ---------- */
   #searchView{display:none}
   #searchView h2{font-size:20px;margin-bottom:14px}
@@ -194,7 +220,7 @@
   <aside id="sidebar">
     <div class="side-head">
       <h1>初一数学<em>知识库</em></h1>
-      <div class="sub">知识点 · 例题精讲 · 分层题库</div>
+      <div class="sub">人教版 · 教材例题 · 易错难点 · 中考月考题库</div>
     </div>
     <style>
       .side-links{display:flex;gap:8px;padding:10px 12px 0;flex-wrap:wrap}
@@ -259,10 +285,14 @@
   function isDone(qid){try{return localStorage.getItem(doneKey(qid))==='1';}catch(e){return false;}}
   function setDone(qid,v){try{v?localStorage.setItem(doneKey(qid),'1'):localStorage.removeItem(doneKey(qid));}catch(e){}}
 
+  // 四大题库分区：key -> 标题
+  var BANKS=[["questions","分层题库"],["zhongkao","中考真题"],["yuekao","月考 · 期中期末"],["extension","拓展提升"]];
   function allQuestions(){
-    var arr=[];CHAPTERS.forEach(function(c){(c.units||[]).forEach(function(u){(u.questions||[]).forEach(function(q,i){arr.push({ch:c,u:u,q:q,i:i});});});});return arr;
+    var arr=[];CHAPTERS.forEach(function(c){(c.units||[]).forEach(function(u){
+      BANKS.forEach(function(b){(u[b[0]]||[]).forEach(function(q,i){arr.push({ch:c,u:u,q:q,i:i,bank:b[0]});});});
+    });});return arr;
   }
-  function qid(ch,u,i){return ch.id+'/'+u.id+'/q'+i;}
+  function qid(ch,u,bank,i){return ch.id+'/'+u.id+'/'+bank+'/'+i;}
 
   /* ---------- 侧边栏 ---------- */
   function buildNav(){
@@ -275,13 +305,14 @@
       html+='<div class="vol">'+vol+'</div>';
       CHAPTERS.filter(function(c){return c.volume===vol;}).forEach(function(c){
         var total=0,cnt=0;
-        (c.units||[]).forEach(function(u){(u.questions||[]).forEach(function(q,i){total++;if(isDone(qid(c,u,i)))cnt++;});});
+        (c.units||[]).forEach(function(u){BANKS.forEach(function(b){(u[b[0]]||[]).forEach(function(q,i){total++;if(isDone(qid(c,u,b[0],i)))cnt++;});});});
         var activeCh = cur.ch===c.id;
         html+='<div class="chapter-item'+(activeCh?' active expanded':'')+'" data-ch="'+c.id+'">'+
           '<a data-nav="ch:'+c.id+'"><span><span class="no">'+c.no+'</span>'+esc(c.title)+'</span>'+
           '<span class="prog">'+(cnt?cnt+'/':'')+total+'</span></a><div class="unit-list">';
         (c.units||[]).forEach(function(u){
-          html+='<a data-nav="u:'+c.id+'/'+u.id+'"'+(cur.u===u.id&&cur.ch===c.id?' class="active"':'')+'>'+esc(u.title)+'</a>';
+          var n=(u.questions||[]).length+(u.zhongkao||[]).length+(u.yuekao||[]).length+(u.extension||[]).length+(u.textbookExamples||[]).length;
+          html+='<a data-nav="u:'+c.id+'/'+u.id+'"'+(cur.u===u.id&&cur.ch===c.id?' class="active"':'')+'><span>'+esc(u.title)+'</span><span class="uq">'+n+'题</span></a>';
         });
         html+='</div></div>';
       });
@@ -294,7 +325,7 @@
     var qs=allQuestions();
     var done=0;qs.forEach(function(o){if(isDone(qid(o.ch,o.u,o.i)))done++;});
     var html='<div class="home-hero"><h2>初一数学 · 知识库与题库</h2>'+
-      '<p>覆盖人教版七年级上、下册全部核心章节：每个知识点配备<b>概念讲解、公式卡、例题精讲</b>，以及<b>基础 / 提高 / 拓展三层题库</b>，每题附完整步骤详解与易错点提示。点击题目可展开解析，再次点击收起。</p>'+
+      '<p>覆盖人教版七年级上、下册全部核心章节：每个小节配备<b>概念讲解、公式卡、教材经典例题精讲、易错点清单、难点突破</b>，以及<b>分层题库、中考真题、月考 · 期中期末题、拓展提升</b>四大题库，每题附完整步骤详解与易错点提示。点击题目可展开解析，再次点击收起。</p>'+
       '<div class="home-stats">'+
       '<div><b>'+CHAPTERS.length+'</b>章节</div>'+
       '<div><b>'+CHAPTERS.reduce(function(s,c){return s+(c.units||[]).length;},0)+'</b>知识点单元</div>'+
@@ -317,7 +348,7 @@
   }
 
   /* ---------- 单元页 ---------- */
-  function buildUnit(chId,uId,qi){
+  function buildUnit(chId,uId,qi,bank){
     var c=CHAPTERS.filter(function(x){return x.id===chId;})[0];
     if(!c){go('');return;}
     var u=(c.units||[]).filter(function(x){return x.id===uId;})[0]||c.units[0];
@@ -346,20 +377,37 @@
       u.formulas.forEach(function(f){html+='<li>'+fmt(f)+'</li>';});
       html+='</ul></section>';
     }
-    if(u.example){
-      html+='<section class="block example"><h3>例题精讲</h3><div class="ex-q">'+fmt(u.example.q)+'</div><ol class="steps">';
-      (u.example.steps||[]).forEach(function(s){html+='<li>'+fmt(s)+'</li>';});
-      html+='</ol>';
-      if(u.example.note)html+='<div class="ex-note"><b>易错提醒：</b>'+fmt(u.example.note)+'</div>';
+    if(u.textbookExamples&&u.textbookExamples.length){
+      html+='<section class="block example"><h3>📖 教材经典例题 · 精讲</h3>';
+      u.textbookExamples.forEach(function(ex){
+        html+='<div class="ex-box">'+(ex.src?'<span class="ex-src">'+esc(ex.src)+'</span>':'')+
+          '<div class="ex-q" style="margin-top:8px">'+fmt(ex.q)+'</div><ol class="steps">';
+        (ex.steps||[]).forEach(function(s){html+='<li>'+fmt(s)+'</li>';});
+        html+='</ol>';
+        if(ex.note)html+='<div class="ex-note"><b>方法点睛：</b>'+fmt(ex.note)+'</div>';
+        html+='</div>';
+      });
       html+='</section>';
     }
-    if(u.questions&&u.questions.length){
-      html+='<section class="block qbank"><h3>分层题库（点击题目查看 / 收起详解）</h3>';
-      u.questions.forEach(function(q,i){
-        var id=qid(c,u,i),open=isDone(id);
+    if(u.pitfalls&&u.pitfalls.length){
+      html+='<section class="block pit"><h3>⚠ 易错点清单（丢分陷阱逐条排查）</h3><ul class="pit-list">'+
+        u.pitfalls.map(function(x){return '<li>'+fmt(x)+'</li>';}).join('')+'</ul></section>';
+    }
+    if(u.hardPoints&&u.hardPoints.length){
+      html+='<section class="block hard"><h3>🔥 难点突破</h3><ul class="hard-list">'+
+        u.hardPoints.map(function(x){return '<li>'+fmt(x)+'</li>';}).join('')+'</ul></section>';
+    }
+    function renderBank(bk){
+      var arr=u[bk[0]]||[];
+      if(!arr.length)return;
+      html+='<section class="block qbank '+bk[0]+'"><h3>'+bk[1]+'（点击题目查看 / 收起详解）</h3>';
+      arr.forEach(function(q,i){
+        var id=qid(c,u,bk[0],i),open=isDone(id);
         html+='<div class="q-item'+(open?' open':'')+'" data-q="'+id+'"><div class="q-head">'+
-          '<span class="q-no">'+(i+1)+'</span><div class="q-text"><span class="diff '+esc(q.diff)+'">'+esc(q.diff)+'</span>'+fmt(q.q)+'</div>'+
-          '<span class="q-toggle">查看详解 ▾</span></div><div class="q-body"><h5>【详解】</h5><ol>';
+          '<span class="q-no">'+(i+1)+'</span><div class="q-text">'+
+          (q.src?'<span class="src-badge '+(bk[0]==='zhongkao'?'zk':'yk')+'">'+esc(q.src)+'</span>':'')+
+          (q.diff?'<span class="diff '+esc(q.diff)+'">'+esc(q.diff)+'</span>':'')+
+          fmt(q.q)+'</div><span class="q-toggle">查看详解 ▾</span></div><div class="q-body"><h5>【详解】</h5><ol>';
         (q.ans||[]).forEach(function(a){html+='<li>'+fmt(a)+'</li>';});
         html+='</ol>';
         if(q.tip)html+='<div class="q-tip"><b>易错点：</b>'+fmt(q.tip)+'</div>';
@@ -367,6 +415,7 @@
       });
       html+='</section>';
     }
+    BANKS.forEach(renderBank);
     // 上下单元导航
     var flat=[];CHAPTERS.forEach(function(cc){(cc.units||[]).forEach(function(uu){flat.push({ch:cc.id,u:uu.id});});});
     var idx=flat.findIndex(function(x){return x.ch===c.id&&x.u===u.id;});
@@ -377,7 +426,7 @@
     html+='</div>';
     unitView.innerHTML=html;
     if(qi>=0){
-      var qEl=unitView.querySelector('[data-q="'+c.id+'/'+u.id+'/q'+qi+'"]');
+      var qEl=unitView.querySelector('[data-q="'+c.id+'/'+u.id+'/'+(bank||'questions')+'/'+qi+'"]');
       if(qEl){
         qEl.classList.add('open');
         setTimeout(function(){qEl.scrollIntoView({behavior:'smooth',block:'center'});},120);
@@ -404,9 +453,17 @@
           if((p.t+' '+(p.d||'')).indexOf(kw)>-1)
             hits.push({type:'kp',ch:c,u:u,text:'<b>'+esc(p.t)+'</b>：'+esc((p.d||'').replace(/\*[^*]*\*/g,'').slice(0,70))});
         });
-        (u.questions||[]).forEach(function(q,i){
-          if(q.q.indexOf(kw)>-1||(q.tip||'').indexOf(kw)>-1)
-            hits.push({type:'q',ch:c,u:u,qi:i,text:esc(q.q.replace(/\*[^*]*\*/g,'').slice(0,80)),diff:q.diff});
+        BANKS.forEach(function(bk){
+          (u[bk[0]]||[]).forEach(function(q,i){
+            if(q.q.indexOf(kw)>-1||(q.tip||'').indexOf(kw)>-1)
+              hits.push({type:'q',bank:bk[0],tag:bk[1],ch:c,u:u,qi:i,text:esc(q.q.replace(/\*[^*]*\*/g,'').slice(0,80)),diff:q.diff});
+          });
+        });
+        (u.pitfalls||[]).forEach(function(x){
+          if(x.indexOf(kw)>-1)hits.push({type:'kp',ch:c,u:u,text:'<span class="s-type" style="background:var(--amber-soft);color:var(--amber)">易错点</span>'+esc(x.replace(/\*[^*]*\*/g,'').slice(0,70))});
+        });
+        (u.hardPoints||[]).forEach(function(x){
+          if(x.indexOf(kw)>-1)hits.push({type:'kp',ch:c,u:u,text:'<span class="s-type" style="background:var(--purple-soft);color:var(--purple)">难点</span>'+esc(x.replace(/\*[^*]*\*/g,'').slice(0,70))});
         });
       });
     });
@@ -415,8 +472,10 @@
     if(!hits.length){html+='<div class="no-result">未找到相关内容，换个关键词试试（如：绝对值、数轴、方程、平行线）</div>';}
     else{
       html+=hits.slice(0,60).map(function(h){
-        return '<a class="s-item" data-nav="u:'+h.ch.id+'/'+h.u.id+(h.type==='q'?'?q='+h.qi:'')+'">'+
-          '<span class="s-type '+h.type+'">'+(h.type==='kp'?'知识点':(h.diff||'')+'题')+'</span>'+h.text+
+        var nav='u:'+h.ch.id+'/'+h.u.id+(h.type==='q'?'?bank='+h.bank+'&q='+h.qi:'');
+        var label=h.type==='kp'?'知识点':((h.tag||'')+(h.diff?'·':'')+(h.diff||'')||'题');
+        return '<a class="s-item" data-nav="'+nav+'">'+
+          '<span class="s-type '+h.type+'">'+label+'</span>'+h.text+
           '<div class="s-path">'+esc(h.ch.title)+' · '+esc(h.u.title)+'</div></a>';
       }).join('');
       if(hits.length>60)html+='<div class="no-result">仅显示前 60 条，请缩小关键词范围</div>';
@@ -432,9 +491,9 @@
     if(isUnit)h=h.slice(2);
     else if(h.indexOf('ch:')===0)h=h.slice(3);
     var parts=h.split('?');
-    var qi=((parts[1]||'').match(/q=(\d+)/)||[])[1];
+    var mb=(parts[1]||'').match(/bank=([a-z]+)&q=(\d+)/)||[];
     var seg=(parts[0]||'').split('/');
-    return {view:'',ch:seg[0]||'',uId:seg[1]||'',qi:qi?parseInt(qi,10):-1};
+    return {view:'',ch:seg[0]||'',uId:seg[1]||'',bank:mb[1]||'questions',qi:mb[2]?parseInt(mb[2],10):-1};
   }
   function go(hash){location.hash=hash;}
   window.toggleSide=function(){
@@ -461,7 +520,7 @@
       if(c&&c.units&&c.units.length){location.replace('#u:'+c.id+'/'+c.units[0].id);return;}
     }
     buildNav();
-    if(r.ch&&r.uId){show('unit');buildUnit(r.ch,r.uId,route().qi);}
+    if(r.ch&&r.uId){show('unit');buildUnit(r.ch,r.uId,r.qi,r.bank);}
     else{show('home');buildHome();}
   }
   window.addEventListener('hashchange',render);
