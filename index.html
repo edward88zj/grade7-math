@@ -175,6 +175,9 @@
   #reviewView .r-ch:not(.closed) .r-ch-head .arr::after{content:"▾"}
   #reviewView .r-ch-body{padding:2px 20px 16px}
   #reviewView .r-ch.closed .r-ch-body{display:none}
+  #reviewView .secs{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 2px}
+  #reviewView .secs span{font-size:12px;color:var(--brand);background:#f1f5f9;border:1px solid var(--line);border-radius:999px;padding:2px 10px}
+  #reviewView .ln{margin-top:10px;font-size:13px;line-height:1.7;background:#ecfdf5;border-left:3px solid var(--green);border-radius:0 8px 8px 0;padding:8px 12px;color:#065f46}
   #reviewView .sec{margin-top:12px}
   #reviewView .sec h4{font-size:14px;margin-bottom:7px}
   #reviewView .sec.key{background:var(--brand-soft);border-radius:10px;padding:11px 15px}
@@ -554,15 +557,17 @@
     var R=window.REVIEW_UPPER||[];
     var html='<div class="r-head"><h2 class="r-title">初一上册 · 考点梳理</h2>'+
       '<span class="tag" style="cursor:pointer" data-nav="mindmap">🧠 配套思维导图</span></div>'+
-      '<div class="r-sub">人教版七年级上册 6 章 · 逐章梳理复习重点、难点与易错点</div>'+
+      '<div class="r-sub">人教版（2024 新版）七年级上册 · 6 章 18 小节 · 逐节梳理重点、难点、易错点，并标注辽宁中考 / 大连考情</div>'+
       '<div class="legend"><span class="k">⭐ 重点（必考基础）</span><span class="d">🔥 难点（拉开差距）</span><span class="p">⚠ 易错点（丢分陷阱）</span></div>';
     R.forEach(function(c){
       function sec(cls,title,arr){
         if(!arr||!arr.length)return'';
         return '<div class="sec '+cls+'"><h4>'+title+'</h4><ul>'+arr.map(function(x){return '<li>'+fmt(x)+'</li>';}).join('')+'</ul></div>';
       }
-      html+='<div class="r-ch"><div class="r-ch-head" data-rch><span class="no">'+esc(c.no)+'</span><h3>'+esc(c.title)+'</h3><span class="arr"></span></div><div class="r-ch-body">'+
-        sec('key','⭐ 重点',c.key)+sec('diff','🔥 难点',c.diff)+sec('pit','⚠ 易错点',c.pit)+
+      html+='<div class="r-ch"><div class="r-ch-head" data-rch><span class="no">'+esc(c.no)+'</span><h3>'+esc(c.title)+'</h3><span class="arr"></span></div><div class="r-ch-body">';
+      if(c.secs&&c.secs.length)html+='<div class="secs">'+c.secs.map(function(s){return '<span>'+esc(s)+'</span>';}).join('')+'</div>';
+      if(c.ln)html+='<div class="ln">'+fmt(c.ln)+'</div>';
+      html+=sec('key','⭐ 重点',c.key)+sec('diff','🔥 难点',c.diff)+sec('pit','⚠ 易错点',c.pit)+
         '</div></div>';
     });
     reviewView.innerHTML=html;
@@ -573,7 +578,7 @@
   var mmState=null;
   function mmBuildTree(){
     var COLORS=['#2563eb','#0891b2','#059669','#d97706','#dc2626','#7c3aed'];
-    var root={t:'初一上册\n数学',level:0,children:[]};
+    var root={t:'人教版\n初一上册',level:0,children:[]};
     (window.REVIEW_UPPER||[]).forEach(function(c,i){
       var ch={t:'第'+c.no+'章 '+c.title,level:1,color:COLORS[i%COLORS.length],children:[]};
       (c.branches||[]).forEach(function(b){
